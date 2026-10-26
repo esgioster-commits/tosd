@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EAC Championship 2026 - Meet Program & Swimmer Tracker</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter & System Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
+
+  <!-- Top Header / App Banner -->
+  <header class="bg-gradient-to-r from-sky-700 via-sky-600 to-cyan-600 text-white shadow-md relative no-print">
+    <div class="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="inline-block bg-white/20 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full tracking-wider uppercase">
+              Official Meet Program
+            </span>
+            <span class="text-xs text-sky-100">HY-TEK's MEET MANAGER 8.0</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2">
+            <span>🏊 EAC Championship 2026</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-sky-100 mt-1 flex flex-wrap items-center gap-y-1 gap-x-3">
+            <span>📍 Dubai American Academy</span>
+            <span>•</span>
+            <span>📅 October 25, 2026</span>
+            <span>•</span>
+            <span>Interactive Heat Sheets & Swimmer Lookup</span>
+          </p>
+        </div>
+
+        <!-- Quick Action Button -->
+        <div class="flex items-center gap-2">
+          <button onclick="switchTab('program')" 
+                  class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-white text-sky-700 hover:bg-sky-50 shadow-sm transition-all">
+            📋 View Full Meet Program
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="flex items-center gap-1.5 mt-6 overflow-x-auto pb-1 text-sm border-t border-white/20 pt-3">
+        <button data-tab-target="search" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white text-sky-800 shadow-sm">
+          🔍 Swimmer Lookup & Matchups
+        </button>
+        <button data-tab-target="program" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white/90 hover:bg-white/10">
+          📋 Full Meet Program
+        </button>
+        <button data-tab-target="teams" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white/90 hover:bg-white/10">
+          🏫 Teams & Schools
+        </button>
+        <button data-tab-target="favorites" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white/90 hover:bg-white/10 relative">
+          ⭐ My Swimmers
+          <span id="favCountBadge" class="hidden ml-1 px-1.5 py-0.2 bg-amber-400 text-slate-900 text-[10px] font-bold rounded-full">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-6xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex-1 w-full">
+
+    <!-- ==================== TAB 1: SWIMMER LOOKUP (Requirement 1 & 2) ==================== -->
+    <section id="searchSection" class="space-y-6">
+      
+      <!-- Big Search Box -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 sm:p-6 no-print">
+        <label for="swimmerSearchInput" class="block text-sm font-bold text-slate-900 mb-2">
+          Enter Swimmer Name (First or Last Name)
+        </label>
+        
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          
+          <input type="text" 
+                 id="swimmerSearchInput" 
+                 placeholder="Type a swimmer name (e.g. Charlie, Kim, Dominguez, Luca, Olivia, Emme)..." 
+                 autocomplete="off"
+                 class="w-full pl-11 pr-12 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 font-medium transition-all text-base sm:text-lg">
+          
+          <button id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600">
+            ✕
+          </button>
+          
+          <!-- Live Autocomplete Dropdown -->
+          <div id="searchResultsDropdown" class="hidden absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-slate-200 z-50 overflow-hidden animate-fade-in">
+            <!-- Populated dynamically via app.js -->
+          </div>
+        </div>
+
+        <!-- Quick Swimmer Chips -->
+        <div class="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <span class="font-semibold text-slate-700">Quick Picks:</span>
+          <button onclick="selectSwimmer('Kim, Charlie')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Kim, Charlie</button>
+          <button onclick="selectSwimmer('Nicolardi, Luca')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Nicolardi, Luca</button>
+          <button onclick="selectSwimmer('Dominguez, Noah R')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Dominguez, Noah</button>
+          <button onclick="selectSwimmer('Hunt, Emme')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Hunt, Emme</button>
+          <button onclick="selectSwimmer('Ahn, Jieun')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Ahn, Jieun</button>
+          <button onclick="selectSwimmer('Cha, Hyunjun')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Cha, Hyunjun</button>
+          <button onclick="selectSwimmer('Ko, Yeonwoo')" class="px-2.5 py-1 bg-slate-100 hover:bg-sky-50 hover:text-sky-600 rounded-lg transition-colors font-medium">Ko, Yeonwoo</button>
+        </div>
+      </div>
+
+      <!-- Empty State before Search -->
+      <div id="searchEmptyState" class="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center">
+        <div class="w-16 h-16 bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+          🔍
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 mb-2">Search for a Swimmer to View Schedule & Heat Matchups</h3>
+        <p class="text-sm text-slate-500 max-w-lg mx-auto mb-6">
+          Find out exactly <strong>which events, which heats, which lanes, and what start times</strong> each swimmer is competing in, along with their <strong>complete heat competitors list</strong>.
+        </p>
+        <div class="flex flex-wrap justify-center gap-3">
+          <button onclick="switchTab('program')" class="px-4 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-sm transition-all">
+            📋 View Full Meet Program
+          </button>
+          <button onclick="showQuickSwimmers()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl transition-all">
+            👥 Browse All Swimmers
+          </button>
+        </div>
+      </div>
+
+      <!-- Swimmer Detail Container (Rendered dynamically) -->
+      <div id="swimmerDetailContainer" class="hidden">
+        <!-- Swimmer Profile + Schedule Cards + Heat Matchup will render here -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: FULL MEET PROGRAM (Requirement 4) ==================== -->
+    <section id="programSection" class="hidden space-y-6">
+      
+      <!-- Filter Bar -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 no-print">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">📋 Official Meet Program (Heat Sheets)</h2>
+          <p class="text-xs text-slate-500">Exact heat sheet layout from the printed program. Click any swimmer to view their profile.</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+          <!-- Session Filter -->
+          <select id="programSessionFilter" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+            <option value="all">All Sessions</option>
+            <option value="Morning">Morning Session</option>
+            <option value="Afternoon">Afternoon Session</option>
+          </select>
+
+          <!-- Event Filter -->
+          <select id="programEventFilter" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500 max-w-xs truncate">
+            <option value="all">All Events</option>
+          </select>
+
+          <button onclick="window.print()" class="px-3 py-2 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1 transition-colors">
+            🖨️ Print
+          </button>
+        </div>
+      </div>
+
+      <!-- Program List Container -->
+      <div id="programListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: TEAMS & SCHOOLS ==================== -->
+    <section id="teamsSection" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-6">
+        <h2 class="text-lg font-bold text-slate-900">🏫 Participating Teams & Rosters</h2>
+        <p class="text-xs text-slate-500">Browse swimmers grouped by school or club. Click any swimmer to view their schedule.</p>
+      </div>
+
+      <div id="teamsListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: FAVORITES ==================== -->
+    <section id="favoritesSection" class="hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">⭐ My Starred Swimmers</h2>
+          <p class="text-xs text-slate-500">Keep track of your family and teammates in one quick dashboard.</p>
+        </div>
+      </div>
+
+      <div id="favoritesListContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification Popup -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden opacity-0 translate-y-4 transition-all duration-300">
+    <div class="bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium border border-slate-700">
+      <span class="text-sky-400 text-lg">ℹ️</span>
+      <span id="toastMessage">Notification message</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-8 text-center text-xs text-slate-500 no-print">
+    <div class="max-w-6xl mx-auto px-4 space-y-2">
+      <p class="font-semibold text-slate-700">EAC Championship 2026 • Dubai American Academy</p>
+      <p>Powered by HY-TEK's MEET MANAGER 8.0 Data</p>
+      <p class="text-[11px] text-slate-400">Real-Time Swimmer Schedule & Heat Sheet Tracker for Parents, Coaches & Athletes</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
